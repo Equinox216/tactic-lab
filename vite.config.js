@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 // ⚠️ Change this to your GitHub repo name: '/your-repo-name/'
-const BASE_PATH = '/tactics-lab/'
+const BASE_PATH = '/tactic-lab/'
 
 export default defineConfig({
   base: BASE_PATH,
