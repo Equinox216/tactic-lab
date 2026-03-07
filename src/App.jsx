@@ -4,7 +4,7 @@ import * as d3 from "d3";
 // ═══════════════════════════════════════════════════════
 // CONSTANTS
 // ═══════════════════════════════════════════════════════
-const VERSION = "v1.2";
+const VERSION = "v2.0.3";
 const PITCH = { w: 65, h: 45 };
 const SCALE = 12;
 const PW = PITCH.w * SCALE, PH = PITCH.h * SCALE, PAD = 30;
@@ -195,7 +195,7 @@ function PitchSVG({ children, homeName, awayName, showOpponent, svgRef }) {
 // ═══════════════════════════════════════════════════════
 // PLAYER DOT
 // ═══════════════════════════════════════════════════════
-function PlayerDot({ player, selected, onSelect, onDrag, onDragEnd, isHome, showData, ghost }) {
+function PlayerDot({ player, selected, onSelect, onDragEnd, isHome, showData, ghost }) {
   const fill = player.role === "GK" ? "#f59e0b" : (isHome ? "#ef4444" : "#3b82f6");
   const r = selected ? 16 : 14;
 
@@ -295,13 +295,21 @@ function PlayerDot({ player, selected, onSelect, onDrag, onDragEnd, isHome, show
         <animate attributeName="r" values={`${r+4};${r+8};${r+4}`} dur="1.5s" repeatCount="indefinite" />
       </circle>}
       {player.preset && <circle cx={px+r-2} cy={py-r+2} r={4} fill="#f59e0b" stroke="#000" strokeWidth={1} />}
-      {/* hasBall indicator — larger ball on top of circle, clearly distinct from preset */}
+      {/* hasBall indicator — SVG soccer ball to the right of player */}
       {player.hasBall && (
-        <g>
-          <circle cx={px} cy={py-r-7} r={8} fill="#f5f5f0" stroke="#111" strokeWidth={1.5}/>
-          <circle cx={px-2} cy={py-r-9} r={2} fill="#bbb"/>
-          <circle cx={px+2} cy={py-r-5} r={1.5} fill="#ccc"/>
-          <text x={px} y={py-r-4} textAnchor="middle" dominantBaseline="middle" fontSize={8} pointerEvents="none">&#9917;</text>
+        <g transform={`translate(${px+r+9},${py})`}>
+          {/* shadow */}
+          <ellipse cx={0} cy={10} rx={6} ry={3} fill="rgba(0,0,0,0.3)"/>
+          {/* white base */}
+          <circle cx={0} cy={0} r={8} fill="#f0f0e8" stroke="#222" strokeWidth={1.2}/>
+          {/* centre pentagon */}
+          <polygon points="0,-4 3.8,-1.2 2.4,3.2 -2.4,3.2 -3.8,-1.2" fill="#111" opacity={0.85}/>
+          {/* surrounding patches */}
+          <polygon points="0,-8 2.5,-5.5 0,-4 -2.5,-5.5" fill="#111" opacity={0.85}/>
+          <polygon points="7,-2.5 5,0.5 3.8,-1.2 5.5,-4" fill="#111" opacity={0.85}/>
+          <polygon points="4.5,6.5 2,7.5 2.4,3.2 5,0.5" fill="#111" opacity={0.85}/>
+          <polygon points="-4.5,6.5 -5,0.5 -2.4,3.2 -2,7.5" fill="#111" opacity={0.85}/>
+          <polygon points="-7,-2.5 -5.5,-4 -3.8,-1.2 -5,0.5" fill="#111" opacity={0.85}/>
         </g>
       )}
       {/* Touch target — larger invisible hit area for mobile */}
@@ -377,11 +385,15 @@ function Arrows({ from, to, color }) {
 // Static ball marker for set pieces
 function SetPieceBall({ mx, my }) {
   const { px, py } = toPixel(mx, my);
-  return <g pointerEvents="none">
-    <ellipse cx={px+2} cy={py+3} rx={7} ry={3.5} fill="rgba(0,0,0,0.3)"/>
-    <circle cx={px} cy={py} r={8} fill="#f5f5f0" stroke="#222" strokeWidth={1.5}/>
-    <path d={`M${px-3},${py-2} Q${px},${py-6} ${px+3},${py-2}`} fill="none" stroke="#999" strokeWidth={0.8}/>
-    <path d={`M${px-4},${py+1} Q${px-2},${py+4} ${px+1},${py+3}`} fill="none" stroke="#999" strokeWidth={0.8}/>
+  return <g pointerEvents="none" transform={`translate(${px},${py})`}>
+    <ellipse cx={2} cy={10} rx={8} ry={4} fill="rgba(0,0,0,0.3)"/>
+    <circle cx={0} cy={0} r={9} fill="#f0f0e8" stroke="#222" strokeWidth={1.5}/>
+    <polygon points="0,-4.5 4.3,-1.4 2.6,3.6 -2.6,3.6 -4.3,-1.4" fill="#111" opacity={0.85}/>
+    <polygon points="0,-9 2.8,-6 0,-4.5 -2.8,-6" fill="#111" opacity={0.85}/>
+    <polygon points="8.5,-2.5 5.5,0.5 4.3,-1.4 6.5,-5" fill="#111" opacity={0.85}/>
+    <polygon points="5,7.5 2,8.5 2.6,3.6 5.5,0.5" fill="#111" opacity={0.85}/>
+    <polygon points="-5,7.5 -5.5,0.5 -2.6,3.6 -2,8.5" fill="#111" opacity={0.85}/>
+    <polygon points="-8.5,-2.5 -6.5,-5 -4.3,-1.4 -5.5,0.5" fill="#111" opacity={0.85}/>
   </g>;
 }
 
@@ -505,7 +517,7 @@ export default function BandidosTacticLab() {
   const [showGrid, setShowGrid] = useState(false);
   const [flipped, setFlipped] = useState(false);
   const [phaseNotes, setPhaseNotes] = useState({ 0:"", 1:"" });
-  const [ball, _ball] = useState(null); // removed — hasBall on player instead
+
 
   const toggleHasBall = useCallback((playerId) => {
     setPhases(prev => {
@@ -521,7 +533,7 @@ export default function BandidosTacticLab() {
   // ─── Substitutes bench ───
   const [homeSubs, setHomeSubs] = useState(() => makeSubstitutes("home"));
   const [awaySubs, setAwaySubs] = useState(() => makeSubstitutes("away"));
-  const [showSubPlanner, _setShowSubPlanner] = useState(false); // reserved
+
 
   // ─── Tactics slots (5 slots, slot 0 is active) ───
   const EMPTY_SLOT = { label: "Empty", phases: null, phaseNotes: null, homeSubs: null, awaySubs: null };
