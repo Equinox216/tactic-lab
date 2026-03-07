@@ -4,7 +4,7 @@ import * as d3 from "d3";
 // ═══════════════════════════════════════════════════════
 // CONSTANTS
 // ═══════════════════════════════════════════════════════
-const VERSION = "v2.0";
+const VERSION = "v1.2";
 const PITCH = { w: 65, h: 45 };
 const SCALE = 12;
 const PW = PITCH.w * SCALE, PH = PITCH.h * SCALE, PAD = 30;
@@ -1007,7 +1007,7 @@ export default function BandidosTacticLab() {
           display:"flex",alignItems:"center",justifyContent:"center",gap:6,
         }}>
           <span>{setupLock ? "🔒" : "🔓"}</span>
-          <span>{setupLock ? "Setup Lock ON — edits apply to both phases" : "Setup Lock OFF — edits affect this phase only"}</span>
+          <span>{setupLock ? "Base Position Mode — freely move players, no paths tracked" : "Path Mode — movements create arrows between phases"}</span>
         </button>
         <div style={{fontSize:10,color:"#475569",marginBottom:8}}>
           {setupLock
