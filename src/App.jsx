@@ -1,10 +1,10 @@
-import React, { useState, useRef, useCallback, useEffect, useMemo } from “react”;
-import * as d3 from “d3”;
+import React, { useState, useRef, useCallback, useEffect, useMemo } from "react";
+import * as d3 from "d3";
 
 // ═══════════════════════════════════════════════════════
 // CONSTANTS
 // ═══════════════════════════════════════════════════════
-const VERSION = “v1.2”;
+const VERSION = "v1.5”;
 const PITCH = { w: 65, h: 45 };
 const SCALE = 12;
 const PW = PITCH.w * SCALE, PH = PITCH.h * SCALE, PAD = 30;
