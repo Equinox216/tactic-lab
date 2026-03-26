@@ -2,8 +2,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
-// ⚠️ Change this to your GitHub repo name: '/your-repo-name/'
-const BASE_PATH = '/tactic-lab/'
+// Detect deployment target: Vercel sets VERCEL=1 in its build env
+const BASE_PATH = process.env.VERCEL ? '/' : '/tactic-lab/'
 
 export default defineConfig({
   base: BASE_PATH,
